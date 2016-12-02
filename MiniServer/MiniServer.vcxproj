@@ -18,6 +18,25 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Server.cpp" />
+    <ClCompile Include="Source\TCPConnection.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\Channel.hpp" />
+    <ClInclude Include="Include\GenericMemory.hpp" />
+    <ClInclude Include="Include\IdPool.hpp" />
+    <ClInclude Include="Include\maths.vector.hpp" />
+    <ClInclude Include="Include\Protocol.hpp" />
+    <ClInclude Include="Include\Rotation.hpp" />
+    <ClInclude Include="Include\Server.hpp" />
+    <ClInclude Include="Include\SharedRef.hpp" />
+    <ClInclude Include="Include\SharedRefInternals.hpp" />
+    <ClInclude Include="Include\TCPConnection.hpp" />
+    <ClInclude Include="Include\Transform.hpp" />
+    <ClInclude Include="Include\UniquePtr.hpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8989228A-0849-4DB0-A171-F5251475BF42}</ProjectGuid>
     <RootNamespace>MiniServer</RootNamespace>
@@ -41,14 +60,14 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -81,7 +100,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Include;C:\local\boost_1_62_0</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\$(Configuration)\;C:\local\boost_1_62_0\lib64-msvc-14.0;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libboost_system-vc140-mt-gd-1_62.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -103,14 +127,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Include;C:\local\boost_1_62_0</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\$(Configuration)\;C:\local\boost_1_62_0\lib64-msvc-14.0;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libboost_system-vc140-mt-s-1_62.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
