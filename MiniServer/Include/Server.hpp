@@ -16,6 +16,7 @@ public:
         , idPool(16)
     {
         UDPInit(io_service);
+        tcpConnections.fill(SharedPtr<TCPConnection>(nullptr));
     }
 
 private:
@@ -59,8 +60,8 @@ private:
 
     boost::array<uint8_t, sizeof(UDPMessage)> udpRecvBuffer;
     boost::array<uint8_t, sizeof(UDPMessage)> udpSendBuffer;
-    std::unordered_map < uint8_t, udp::endpoint > udpConnections;
-    std::unordered_map < uint8_t, SharedPtr<TCPConnection> > tcpConnections;
+    std::array<udp::endpoint, 16> udpConnections;
+    std::array<SharedPtr<TCPConnection>, 16> tcpConnections;
     udp::socket udpSocket;
     tcp::acceptor acceptor;
     bool udpBusy;
@@ -69,4 +70,6 @@ private:
 
     Channel<UDPMessage> udpMessageChannel;
     Channel<TCPMessage> tcpMessageChannel;
+
+    std::array<PlayerRecord, 16> playerRecords;
 };

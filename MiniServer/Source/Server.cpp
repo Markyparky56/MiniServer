@@ -7,8 +7,11 @@ void Server::tcpHandleAccept(SharedPtr<TCPConnection> newConnection, const boost
     {
         // Give the new connection an id and store it
         uint8_t id = static_cast<uint8_t>(idPool.GetNextID());
-        tcpConnections.insert(std::make_pair(id, newConnection));
+        tcpConnections[id].Reset(); // Make sure we clear anything which may be lingering
+        tcpConnections[id] = newConnection;
         // Tell the new client who they are
+        TCPMessage response = { TCPMessageType::YouAreConnected, std::time(nullptr), { id } };
+        newConnection->Send(response);
     }
     else
     {

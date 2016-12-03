@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <ctime>
 #include "Transform.hpp"
 
 /*************************** Protocol Over TCP ***************************/
@@ -21,7 +22,6 @@ enum class  DisconnectType : uint8_t
     Standard // Could be expanded to include things like connection timeout or being kicked for too high a ping
 };
 
-// Vector3s are already 4 byte aligned due to them using floats
 #pragma pack(push, 1)
 struct PlayerRecord
 {
@@ -93,22 +93,24 @@ struct TCPMessagePingPongData
 };
 #pragma pack(pop)
 
+union TCPMessageData
+{
+    TCPMessageIWantToConnectIPv4Data ipv4ConnectData;
+    TCPMessageIWantToConnectIPv6Data ipv6ConnectData;
+    TCPMessageYouAreConnectedData youAreConnectedData;
+    TCPMessageIAmDisconnectingData iAmDisconnectingData;
+    TCPMessageConnectTellData connectTellData;
+    TCPMessageDisconnectTellData disconnectTellData;
+    TCPMessageSnapshotData snapshotData;
+    TCPMessagePingPongData pingPongData;
+};
+
 #pragma pack(push, 1)
 struct TCPMessage
 {
     TCPMessageType type;
     uint64_t unixTimestamp;
-    union TCPMessageData
-    {
-        TCPMessageIWantToConnectIPv4Data ipv4ConnectData;
-        TCPMessageIWantToConnectIPv6Data ipv6ConnectData;
-        TCPMessageYouAreConnectedData youAreConnectedData;
-        TCPMessageIAmDisconnectingData iAmDisconnectingData;
-        TCPMessageConnectTellData connectTellData;
-        TCPMessageDisconnectTellData disconnectTellData;
-        TCPMessageSnapshotData snapshotData;
-        TCPMessagePingPongData pingPongData;
-    } data;
+    TCPMessageData data;
 };
 #pragma pack(pop)
 

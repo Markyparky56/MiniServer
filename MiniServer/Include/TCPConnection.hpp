@@ -16,12 +16,16 @@ class TCPConnection : public boost::enable_shared_from_this<TCPConnection>
 public:
     static SharedPtr<TCPConnection> Create(boost::asio::io_service &io_service, Channel<TCPMessage> *InTcpMessageChannel)
     {
-        return MakeShareable(new TCPConnection(io_service, InTcpMessageChannel)));
+        return MakeShareable(new TCPConnection(io_service, InTcpMessageChannel));
     }
 
     tcp::socket &GetSocket() { return socket; }
 
     void Send(TCPMessage &msg);
+    void Close()
+    {
+        socket.close();
+    }
     
 private:
     TCPConnection(boost::asio::io_service &io_service, Channel<TCPMessage> *InTcpMessageChannel)
@@ -30,7 +34,6 @@ private:
     {
     }
 
-    void tcpHandleAccept();
     void tcpHandleReceive(const boost::system::error_code &error, std::size_t bytesTransferred);
     void tcpHandleSend(const boost::system::error_code &error, std::size_t bytesTransferred);
 
