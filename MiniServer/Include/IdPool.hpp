@@ -17,6 +17,7 @@ public:
 		{
 			unused.push(Size - i);
 		}
+        unused.push(0);
 	}
 
 	inline unsigned int GetNextID()

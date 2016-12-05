@@ -165,8 +165,7 @@ public:
     {
         return ((x*vec2.x) + (y*vec2.y));
     }
-    //// Cross Product
-    //Vector2 cross(const Vector2& vec2);
+
     inline void normalise()
     {
         float mag = magnitude();

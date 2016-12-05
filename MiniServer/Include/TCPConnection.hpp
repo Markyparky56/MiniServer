@@ -8,19 +8,23 @@
 #include "Protocol.hpp"
 #include "UniquePtr.hpp"
 #include "SharedRef.hpp"
+#include <iostream>
 
 using boost::asio::ip::tcp;
 
+// The TCPConnection class listens on a socket for incoming messages and passes them down a Channel to be
+// processed each tick
 class TCPConnection : public boost::enable_shared_from_this<TCPConnection>
 {
 public:
-    static SharedPtr<TCPConnection> Create(boost::asio::io_service &io_service, Channel<TCPMessage> *InTcpMessageChannel)
+    static SharedPtr<TCPConnection> Create(boost::asio::io_service &io_service, Channel<TCPMessage, std::queue<TCPMessage> > *InTcpMessageChannel)
     {
         return MakeShareable(new TCPConnection(io_service, InTcpMessageChannel));
     }
 
     tcp::socket &GetSocket() { return socket; }
 
+    void StartReceive();
     void Send(TCPMessage &msg);
     void Close()
     {
@@ -28,7 +32,7 @@ public:
     }
     
 private:
-    TCPConnection(boost::asio::io_service &io_service, Channel<TCPMessage> *InTcpMessageChannel)
+    TCPConnection(boost::asio::io_service &io_service, Channel<TCPMessage, std::queue<TCPMessage> > *InTcpMessageChannel)
         : socket(io_service)
         , tcpMessageChannel(InTcpMessageChannel)
     {
@@ -40,8 +44,7 @@ private:
     boost::array<uint8_t, sizeof(TCPMessage)> tcpSendBuffer;
     boost::array<uint8_t, sizeof(TCPMessage)> tcpRecvBuffer;
 
-    Channel<TCPMessage> *tcpMessageChannel;
+    Channel<TCPMessage, std::queue<TCPMessage> > *tcpMessageChannel;
 
     tcp::socket socket;
-    bool tcpBusy;
 };

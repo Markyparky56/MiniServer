@@ -1,5 +1,12 @@
 #include "TCPConnection.hpp"
-#include <iostream>
+
+void TCPConnection::StartReceive()
+{
+    socket.async_receive(
+        boost::asio::buffer(tcpRecvBuffer),
+        boost::bind(&TCPConnection::tcpHandleReceive, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred)
+    );    
+}
 
 void TCPConnection::Send(TCPMessage &msg)
 {
@@ -8,28 +15,39 @@ void TCPConnection::Send(TCPMessage &msg)
         boost::asio::buffer(tcpSendBuffer),
         boost::bind(&TCPConnection::tcpHandleSend, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred)
     );
-    tcpBusy = true;
 }
 
 void TCPConnection::tcpHandleReceive(const boost::system::error_code & error, std::size_t bytesTransferred)
 {
     if (!error)
     {
-        assert(bytesTransferred == sizeof(TCPMessage)); // Check the message we just received is the right size
+        assert(bytesTransferred == TCPMessageSize); // Check the message we just received is the right size
         TCPMessage *recvdMsg = reinterpret_cast<TCPMessage*>(tcpRecvBuffer.c_array());
         // Send it down the message channel to be handled byt he main loop
         tcpMessageChannel->Write(*recvdMsg);
+        std::cout << "TCP Message received" << std::endl;
     }
     else
     {
         std::cout << "Error: " << error.message() << std::endl;
 #ifdef _DEBUG
-        abort();
+        //abort();
 #endif
+    }
+    if (socket.is_open())
+    {
+        StartReceive();
     }
 }
 
 void TCPConnection::tcpHandleSend(const boost::system::error_code & error, std::size_t bytesTransferred)
 {
-    tcpBusy = false;
+    if (!error)
+    {
+        std::cout << "TCP Message sent! " << std::endl;
+    }
+    else
+    {
+        std::cout << "Error: " << error.message() << std::endl;
+    }
 }
